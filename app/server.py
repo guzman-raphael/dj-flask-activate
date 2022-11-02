@@ -1,11 +1,13 @@
 from flask import Flask, request
 import time
+import importlib
 import pipeline
 
 app = Flask(__name__)
 
 @app.route("/student")
 def student():
+    importlib.reload(pipeline)
     pipeline.schema.activate(f"{request.args.get('prefix')}_university")
     print("--- imported ---", flush=True)
     # do stuff

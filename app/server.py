@@ -13,7 +13,12 @@ def student():
     print("--- imported ---", flush=True)
     # do stuff
     time.sleep(5)
-    return dict(id=str(schema))
+    return dict(schema=str(schema),
+                message=pipeline.Student().message(),
+                records=pipeline.Student.fetch(
+                    as_dict=True
+                )
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, threaded=True)

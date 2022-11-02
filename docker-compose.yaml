@@ -28,4 +28,4 @@ services:
       - |
         sleep 20
         python /tmp/test/init.py
-        gunicorn -w 1 -b "0.0.0.0:80" 'server:app'
+        gunicorn -w 1 -b "0.0.0.0:80" -k gevent 'server:app'

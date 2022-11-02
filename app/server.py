@@ -8,11 +8,12 @@ app = Flask(__name__)
 @app.route("/student")
 def student():
     importlib.reload(pipeline)
-    pipeline.schema.activate(f"{request.args.get('prefix')}_university")
+    schema = pipeline.schema
+    schema.activate(f"{request.args.get('prefix')}_university")
     print("--- imported ---", flush=True)
     # do stuff
     time.sleep(5)
-    return dict(id=str(pipeline.schema))
+    return dict(id=str(schema))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80, threaded=True)

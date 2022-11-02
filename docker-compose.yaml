@@ -1,0 +1,31 @@
+# docker compose up --build
+# time curl http://localhost/student?prefix=raphael
+# time curl http://localhost/student?prefix=drew
+version: '2.4'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=simple
+  web:
+    image: datajoint/djbase:py3.8-alpine
+    environment:
+      - DJ_HOST=db
+      - DJ_USER=root
+      - DJ_PASS=simple
+      - FLASK_DEBUG=1
+      - FLASK_APP=/tmp/app/server.py
+    ports:
+      - 80:80
+    working_dir: /tmp/app
+    volumes:
+      - ./app:/tmp/app
+      - ./init.py:/tmp/test/init.py
+      - ./pip_requirements.txt:/tmp/pip_requirements.txt
+    command:
+      - sh
+      - -c
+      - |
+        sleep 20
+        python /tmp/test/init.py
+        python server.py

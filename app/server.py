@@ -11,11 +11,11 @@ def protected_route(function):
     @wraps(function)
     def wrapper(**kwargs):
         try:
-            dj.conn(host=os.getenv("DJ_ROOT_HOST"),
-                    user=request.args.get('user'),
-                    password=request.args.get('password'),
-                    reset=True)
-            return function(**kwargs)
+            return function(dj.Connection(host=os.getenv("DJ_ROOT_HOST"),
+                                          user=request.args.get('user'),
+                                          password=request.args.get('password'),
+                                          use_tls=None),
+                            **kwargs)
         except Exception as e:
             return str(e), 401
 
@@ -24,10 +24,10 @@ def protected_route(function):
 
 @app.route("/student")
 @protected_route
-def student():
+def student(connection):
     pipeline=imp.load_module(f"{request.args.get('prefix')}_pipeline",
                              *imp.find_module('pipeline'))
-    pipeline.schema.activate(f"{request.args.get('prefix')}_university")
+    pipeline.schema.activate(f"{request.args.get('prefix')}_university", connection=connection)
     print("--- imported ---", flush=True)
     # do stuff
     time.sleep(5)
@@ -35,7 +35,8 @@ def student():
                 message=pipeline.Student().message(),
                 records=pipeline.Student.fetch(
                     as_dict=True
-                )
+                ),
+                user=connection.get_user(),
     )
 
 if __name__ == "__main__":

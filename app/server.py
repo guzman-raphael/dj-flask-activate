@@ -1,4 +1,6 @@
 from flask import Flask, request
+import datajoint as dj
+import os
 import time
 import imp
 
@@ -6,7 +8,12 @@ app = Flask(__name__)
 
 @app.route("/student")
 def student():
-    pipeline=imp.load_module(f"{request.args.get('prefix')}_pipeline", *imp.find_module('pipeline'))
+    dj.conn(host=os.getenv("DJ_ROOT_HOST"),
+            user=request.args.get('user'),
+            password=request.args.get('password'),
+            reset=True)
+    pipeline=imp.load_module(f"{request.args.get('prefix')}_pipeline",
+                             *imp.find_module('pipeline'))
     pipeline.schema.activate(f"{request.args.get('prefix')}_university")
     print("--- imported ---", flush=True)
     # do stuff

@@ -1,6 +1,6 @@
 # docker compose up --build
-# time curl http://localhost/student?prefix=raphael
-# time curl http://localhost/student?prefix=drew
+# time curl "http://localhost/student?prefix=raphael&user=raphael&password=raphael"
+# time curl "http://localhost/student?prefix=drew&user=drew&password=drew"
 version: '2.4'
 services:
   db:
@@ -10,9 +10,9 @@ services:
   web:
     image: datajoint/djbase:py3.8-alpine
     environment:
-      - DJ_HOST=db
-      - DJ_USER=root
-      - DJ_PASS=simple
+      - DJ_ROOT_HOST=db
+      - DJ_ROOT_USER=root
+      - DJ_ROOT_PASS=simple
       - FLASK_DEBUG=1
       - FLASK_APP=/tmp/app/server.py
     ports:
